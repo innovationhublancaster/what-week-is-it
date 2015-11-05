@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>Lancaster Week</title>
+	</head>
+
+	<script src="http://momentjs.com/downloads/moment.min.js"></script>
+
+	<div class="page_wrapper">
+		<div class="week_wrapper">
+			<div id="staffs_week_div"></div>
+			<div id="aka_div">aka</div>
+			<div id="students_week_div"></div>
+		</div>
+	</div>
+
+	<script>
+
+		function getAcademicWeek(week)
+		{
+			var rawAcademicWeek = week;
+			var term = Math.floor((rawAcademicWeek - 1) / 14);
+			var termWeek = (rawAcademicWeek - 1) % 14;
+			if (term > 2) 
+			{
+				termWeek += 14*(term - 2)
+				term = 2;
+			}
+			var	weekPrefix = term == 0 ? "M" : (term == 1 ? "L" : "S");
+			var vacation = false;
+			if (termWeek >= 10)
+			{
+				var academicWeek = termWeek - 9;
+				var toStaffsWeek = 0;
+				vacation = true;
+			}
+			else
+			{
+				var academicWeek = rawAcademicWeek - (4 * term)
+				var toStaffsWeek = 10*term;
+			}
+			return {prefix: weekPrefix, studentsWeek: academicWeek, staffsWeek: academicWeek - toStaffsWeek, vacation: vacation}
+		}
+
+		//Number of weeks since the beginning of the Academic Year (including vacations)
+		function getRawAcademicWeek()
+		{
+			var october = moment().month(9).date(1);
+			while(october.day() != 5)
+			{
+				october.add(1, 'd');
+			}
+			return moment().week() - october.week();
+		}
+
+		weekObj = getAcademicWeek(getRawAcademicWeek());
+		// weekObj = getAcademicWeek(35);
+
+		staffs_week_div.innerHTML = weekObj.prefix + (weekObj.vacation ? 'V' : 'T') + ' Week ' + weekObj.staffsWeek;
+
+		if (weekObj.studentsWeek != weekObj.staffsWeek)
+		{
+			students_week_div.innerHTML =  'Week ' + weekObj.studentsWeek;
+			aka_div.style.display = 'block';
+		}
+		else
+			aka_div.style.display = 'none';
+
+
+
+	</script>
+
+	<style type="text/css">
+		div
+		{
+			text-align: center;
+			font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+			font-weight: 300;
+			font-size: 30px;
+			color: #fff;
+			line-height: 1.4;
+			text-shadow: 0 1px 0 rgba(0,0,0,.1);
+		}
+
+		.page_wrapper, .week_wrapper
+		{
+		    background-color: #252525;
+	        text-align: center;
+			top:0; bottom:0; left:0; right:0;
+		}
+
+		.week_wrapper
+		{
+			position: absolute;
+			margin: auto;
+			height: 125px;
+		}
+
+		.page_wrapper
+		{
+			margin: auto;
+			position: absolute;
+			width: 100%;
+			height: 60%;
+			padding: 80px 0;
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+	</style>
+
+</html>
