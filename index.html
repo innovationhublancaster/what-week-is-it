@@ -2,15 +2,95 @@
 <html>
 	<head>
 	<title>Lancaster Week</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+	<style type="text/css">
+
+		body {
+			margin: 0;
+			padding: 0;
+			border-top: 8px solid #B5121B;
+			text-align: center;
+			font-family: "effra", "Helvetica Neue",Helvetica,Arial,sans-serif;
+			font-weight: 300;
+			font-size: 16px;
+			color: #252525;
+			line-height: 1.4;
+		}
+
+		h1 {
+			font-weight: 600;
+			font-size: 2em;
+			text-transform: uppercase;
+		}
+
+		.page-wrapper {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			display: table;
+			height: 100%;
+			width: 100%;
+		}
+
+		.week-wrapper {
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		.date {
+			font-size:2em;
+		}
+
+		a {
+			display: block;
+			margin-top: 2em;
+			color: #b5121b;
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+
+		.logo {
+			display: inline-block;
+			padding: 1em;
+		}
+
+
+		img {
+				width: 100px;
+				opacity: 1;
+		}
+
+		.logo:hover img {
+			opacity: 0.8;
+		}
+
+		@media (min-width: 350px) {
+			img {
+					width: 140px;
+			}
+		}
+
+	</style>
+
 	</head>
 
 	<script src="http://momentjs.com/downloads/moment.min.js"></script>
 
-	<div class="page_wrapper">
-		<div class="week_wrapper">
-			<div id="staffs_week_div"></div>
-			<div id="aka_div">aka</div>
-			<div id="students_week_div"></div>
+	<div class="page-wrapper">
+		<div class="week-wrapper">
+			<h1>What week is it?</h1>
+			<div id="staffs-week-div" class="date"></div>
+			<div id="students-week-div" class="date"></div>
+			<a href="http://www.lancaster.ac.uk/about-us/theuniversity/term-dates/">Term Dates</a>
+			<div>
+				<a class="logo" href="http://lancaster.ac.uk"><img src="images/uni-logo-white.jpg" alt="Lancaster University" /></a>
+				<a class="logo" href="http://innovationhub.lancaster.ac.uk"><img src="images/innovation-hub-logo.jpg" alt="The Innovation Hub" /></a>
+			</div>
 		</div>
 	</div>
 
@@ -18,33 +98,38 @@
 
 		function getAcademicWeek(week)
 		{
-			var rawAcademicWeek = week;
-			var term = Math.floor((rawAcademicWeek - 1) / 14);
-			var termWeek = (rawAcademicWeek - 1) % 14;
-			if (term > 2) 
-			{
-				termWeek += 14*(term - 2)
+			var rawAcademicWeek = week,
+			 		term = Math.floor((rawAcademicWeek - 1) / 14),
+					termWeek = (rawAcademicWeek - 1) % 14,
+					academicWeek,
+					toStaffsWeek;
+
+
+			if (term > 2) {
+				termWeek += 14*(term - 2);
 				term = 2;
 			}
-			var	weekPrefix = term == 0 ? "M" : (term == 1 ? "L" : "S");
+
+			var	weekPrefix = term === 0 ? "Michaelmas " : (term == 1 ? "Lent " : "Summer ");
 			var vacation = false;
-			if (termWeek >= 10)
-			{
-				var academicWeek = termWeek - 9;
-				var toStaffsWeek = 0;
+
+			if (termWeek >= 10) {
+
+				academicWeek = termWeek - 9;
+				toStaffsWeek = 0;
 				vacation = true;
+
+			}	else {
+
+				academicWeek = rawAcademicWeek - (4 * term);
+				toStaffsWeek = 10 * term;
+
 			}
-			else
-			{
-				var academicWeek = rawAcademicWeek - (4 * term)
-				var toStaffsWeek = 10*term;
-			}
-			return {prefix: weekPrefix, studentsWeek: academicWeek, staffsWeek: academicWeek - toStaffsWeek, vacation: vacation}
+			return {prefix: weekPrefix, studentsWeek: academicWeek, staffsWeek: academicWeek - toStaffsWeek, vacation: vacation};
 		}
 
 		//Number of weeks since the beginning of the Academic Year (including vacations)
-		function getRawAcademicWeek()
-		{
+		function getRawAcademicWeek()	{
 			var october = moment().month(9).date(1);
 			while(october.day() != 5)
 			{
@@ -54,59 +139,17 @@
 		}
 
 		weekObj = getAcademicWeek(getRawAcademicWeek());
-		// weekObj = getAcademicWeek(35);
+		// 	weekObj = getAcademicWeek(35);
 
-		staffs_week_div.innerHTML = weekObj.prefix + (weekObj.vacation ? 'V' : 'T') + ' Week ' + weekObj.staffsWeek;
+		//console.log(document.getElementById('staffs-week-div'));
+		document.getElementById('staffs-week-div').innerHTML = weekObj.prefix + (weekObj.vacation ? 'Vaction' : 'Term') + ' Week ' + weekObj.staffsWeek;
 
-		if (weekObj.studentsWeek != weekObj.staffsWeek)
-		{
-			students_week_div.innerHTML =  'Week ' + weekObj.studentsWeek;
-			aka_div.style.display = 'block';
+		if (weekObj.studentsWeek != weekObj.staffsWeek) {
+			document.getElementById('students-week-div').innerHTML =  '(Week ' + weekObj.studentsWeek + ')';
 		}
-		else
-			aka_div.style.display = 'none';
 
 
 
 	</script>
-
-	<style type="text/css">
-		div
-		{
-			text-align: center;
-			font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-			font-weight: 300;
-			font-size: 30px;
-			color: #fff;
-			line-height: 1.4;
-			text-shadow: 0 1px 0 rgba(0,0,0,.1);
-		}
-
-		.page_wrapper, .week_wrapper
-		{
-		    background-color: #252525;
-	        text-align: center;
-			top:0; bottom:0; left:0; right:0;
-		}
-
-		.week_wrapper
-		{
-			position: absolute;
-			margin: auto;
-			height: 125px;
-		}
-
-		.page_wrapper
-		{
-			margin: auto;
-			position: absolute;
-			width: 100%;
-			height: 60%;
-			padding: 80px 0;
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			box-sizing: border-box;
-		}
-	</style>
 
 </html>
