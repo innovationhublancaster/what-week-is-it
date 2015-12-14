@@ -142,7 +142,7 @@
 		// 	weekObj = getAcademicWeek(35);
 
 		//console.log(document.getElementById('staffs-week-div'));
-		document.getElementById('staffs-week-div').innerHTML = weekObj.prefix + (weekObj.vacation ? 'Vaction' : 'Term') + ' Week ' + weekObj.staffsWeek;
+		document.getElementById('staffs-week-div').innerHTML = weekObj.prefix + (weekObj.vacation ? 'Vacation' : 'Term') + ' Week ' + weekObj.staffsWeek;
 
 		if (weekObj.studentsWeek != weekObj.staffsWeek) {
 			document.getElementById('students-week-div').innerHTML =  '(Week ' + weekObj.studentsWeek + ')';
