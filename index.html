@@ -99,10 +99,10 @@
 		function getAcademicWeek(week)
 		{
 			var rawAcademicWeek = week,
-			 		term = Math.floor((rawAcademicWeek - 1) / 14),
-					termWeek = (rawAcademicWeek - 1) % 14,
-					academicWeek,
-					toStaffsWeek;
+				term = Math.floor((rawAcademicWeek - 1) / 14),
+				termWeek = (rawAcademicWeek - 1) % 14,
+				academicWeek,
+				toStaffsWeek;
 
 
 			if (term > 2) {
@@ -129,13 +129,19 @@
 		}
 
 		//Number of weeks since the beginning of the Academic Year (including vacations)
-		function getRawAcademicWeek()	{
-			var october = moment().month(9).date(1);
-			while(october.day() != 5)
-			{
-				october.add(1, 'd');
-			}
-			return moment().week() - october.week();
+		function getRawAcademicWeek()	
+		{
+			var october = getFirstFriday(moment().year());
+			if (moment() < october) october = october = getFirstFriday(moment().year() - 1);
+			october.add(3, 'd'); // Monday of the first Academic week
+			return moment().diff(october, 'w') + 1; 
+		}
+
+		function getFirstFriday(year)
+		{
+			var october = moment().year(year).month(9).date(1).day("Friday");
+			if (october.month() < 9) october = october.add(7, 'd');
+			return october;
 		}
 
 		weekObj = getAcademicWeek(getRawAcademicWeek());
